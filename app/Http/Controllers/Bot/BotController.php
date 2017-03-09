@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Bot;
 
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Request;
 
