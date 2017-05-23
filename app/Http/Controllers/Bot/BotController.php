@@ -48,6 +48,8 @@ class BotController extends Controller
             $sendId = $messageId;
         } else if ($type == 'group') {
             $sendId = $decode->events[0]->source->groupId;
+        }  else if ($type == 'room') {
+            $sendId = $decode->events[0]->source->roomId;
         }
 
         //content
