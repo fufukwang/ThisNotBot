@@ -62,9 +62,14 @@ class BotController extends Controller
         file_put_contents("php://stderr", "$userMessage".PHP_EOL);
 
         //匯率api
-        $content = file_get_contents('http://asper-bot-rates.appspot.com/currency.json');
-        $currency = json_decode($content);
+        $currency = null;
+        try{
+            $content = file_get_contents('http://rate.asper.tw/currency.json');    
+            $currency = json_decode($content);
+        } catch (Exception $e) {
 
+        }
+        
         $result = $this->changeName($text, $currency);
 
         if ( ! empty($result)) {
@@ -85,6 +90,8 @@ class BotController extends Controller
         if ( ! empty($funny)) {
             return $funny;
         }
+
+        if($sourceData == null) return '說:'.$typeName;
 
         switch ($typeName) {
             case '日幣':
