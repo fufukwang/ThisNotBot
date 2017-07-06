@@ -34,7 +34,6 @@ class BotController extends Controller
         //get line content
         $jsonString = file_get_contents('php://input');
         $decode = json_decode($jsonString);
-        file_put_contents("php://stderr", "$jsonString".PHP_EOL);
 
         //get info
         $replyToken = $decode->events[0]->replyToken;
@@ -57,9 +56,26 @@ class BotController extends Controller
         $response = $this->bot->getMessageContent($sendId);
         $contentString = json_encode($response);
 
-        file_put_contents("php://stderr", "$type".PHP_EOL);
-        file_put_contents("php://stderr", "$echoId".PHP_EOL);
-        file_put_contents("php://stderr", "$userMessage".PHP_EOL);
+        if($text == 'test'){
+//輪播型(僅手機看的到)
+$columns = array();
+$img_url = "https://image3.thenewslens.com/2017/7/jvo55t9r03wtw77t6nt5v8xw5vytl6.jpg?auto=compress&fit=crop&h=450&q=100&updated_at=2017-07-06-13-16-04&w=750";
+for($i=0;$i<5;$i++) //最多5筆
+{
+  $actions = array(
+    //一般訊息型 action
+    new \LINE\LINEBot\TemplateActionBuilder\MessageTemplateActionBuilder("按鈕1","文字1"),
+    //網址型 action
+    new \LINE\LINEBot\TemplateActionBuilder\UriTemplateActionBuilder("連結","http://www.google.com")
+  );
+  $column = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder("標題".$i, "說明".$i, $img_url , $actions);
+  $columns[] = $column;
+}
+$carousel = new \LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder($columns);
+$msg = new \LINE\LINEBot\MessageBuilder\TemplateMessageBuilder("這訊息要用手機的賴才看的到哦", $carousel);
+$this->bot->replyMessage($replyToken,$msg);
+exit;
+        }
 
         //匯率api
         $currency = null;
@@ -71,6 +87,7 @@ class BotController extends Controller
         }
         
         $result = $this->changeName($text, $currency);
+
 
         if ( ! empty($result)) {
             //send
